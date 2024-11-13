@@ -1,31 +1,39 @@
 package com.dobot0101.springbootauth.domain.member;
 
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
-    MemberRepository memberRepository;
+  final MemberRepository memberRepository;
 
-    public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+  public Member createMember(CreateMemberDto dto) {
+    return memberRepository.save(
+        new Member(UUID.randomUUID(), dto.getEmail(), dto.getName(), dto.getPassword()));
+  }
 
-    public Member createMember(CreateMemberDto dto) {
-        return memberRepository.save(new Member(UUID.randomUUID(), dto.getEmail(), dto.getName(), dto.getPassword()));
-    }
+  public Member findMember(UUID id) {
+    return memberRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("member not found: " + id));
+  }
 
-    public Member findMember(UUID id) {
-    }
+  public List<Member> findAllMembers() {
+    return memberRepository.findAll();
+  }
 
-    public List<Member> findAllMembers() {
+  public Member updateMember(UUID id, UpdateMemberDto dto) {
+    Member member = this.findMember(id);
+    if (dto.getName() != null) {
+      member.setName(dto.getName());
     }
+    memberRepository.save(member);
+    return member;
+  }
 
-    public Member updateMember(UpdateMemberDto dto) {
-    }
-
-    public void deleteMember(UUID id) {
-    }
+  public void deleteMember(UUID id) {
+    memberRepository.deleteById(id);
+  }
 }

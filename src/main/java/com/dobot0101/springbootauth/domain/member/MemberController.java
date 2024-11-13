@@ -1,38 +1,47 @@
 package com.dobot0101.springbootauth.domain.member;
 
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("api/members")
+@RequiredArgsConstructor
 public class MemberController {
-    private final MemberService memberService;
 
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+  private final MemberService memberService;
 
-    Member createMember(@RequestBody @Validated CreateMemberDto dto) {
-        return memberService.createMember(dto);
-    }
+  @PostMapping
+  public Member createMember(@RequestBody @Validated CreateMemberDto dto) {
+    return memberService.createMember(dto);
+  }
 
-    Member findMember(@RequestParam UUID id) {
-        return memberService.findMember(id);
-    }
+  @GetMapping("{id}")
+  public Member findMember(@PathVariable UUID id) {
+    return memberService.findMember(id);
+  }
 
-    List<Member> findAllMembers() {
-        return memberService.findAllMembers();
-    }
+  @GetMapping
+  public List<Member> findAllMembers() {
+    return memberService.findAllMembers();
+  }
 
-    Member upateMember(@RequestBody @Validated UpdateMemberDto dto) {
-        return memberService.updateMember(dto);
-    }
+  @PatchMapping("{id}")
+  public Member upateMember(@PathVariable UUID id, @RequestBody @Validated UpdateMemberDto dto) {
+    return memberService.updateMember(id, dto);
+  }
 
-    void deleteMember(@RequestBody UUID id) {
-        memberService.deleteMember(id);
-    }
+  @DeleteMapping("{id}")
+  public void deleteMember(@PathVariable UUID id) {
+    memberService.deleteMember(id);
+  }
 }

@@ -1,8 +1,9 @@
 package com.dobot0101.springbootauth.domain.member;
 
-import java.util.UUID;
+import lombok.Getter;
+
 
 public class UpdateMemberDto {
-    UUID id;
-    String name;
+  @Getter
+  String name;
 }

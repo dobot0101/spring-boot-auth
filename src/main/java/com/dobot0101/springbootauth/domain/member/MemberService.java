@@ -15,7 +15,7 @@ public class MemberService {
   private final MemberRepository memberRepository;
   private final PasswordEncoder passwordEncoder;
 
-  public Member createMember(CreateMemberDto dto) {
+  public MemberResponseDto createMember(CreateMemberDto dto) {
     // 중복 회원 확인
     Optional<Member> memberOpt = memberRepository.findByEmail(dto.getEmail());
     if (memberOpt.isPresent()) {
@@ -23,27 +23,32 @@ public class MemberService {
     }
 
     var encryptedPassword = passwordEncoder.encode(dto.getPassword());
-
-    return memberRepository.save(
+    var member = memberRepository.save(
         new Member(UUID.randomUUID(), dto.getEmail(), dto.getName(), encryptedPassword));
+    return new MemberResponseDto(member.getId(), member.getEmail(), member.getName());
   }
 
-  public Member findMember(UUID id) {
-    return memberRepository.findById(id)
+  public MemberResponseDto findMember(UUID id) {
+    var member = memberRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("member not found: " + id));
+    return new MemberResponseDto(member.getId(), member.getEmail(), member.getName());
   }
 
-  public List<Member> findAllMembers() {
-    return memberRepository.findAll();
+  public List<MemberResponseDto> findAllMembers() {
+    List<Member> members = memberRepository.findAll();
+    return members.stream()
+        .map(member -> new MemberResponseDto(member.getId(), member.getEmail(), member.getName()))
+        .toList();
   }
 
-  public Member updateMember(UUID id, UpdateMemberDto dto) {
-    Member member = this.findMember(id);
+  public MemberResponseDto updateMember(UUID id, UpdateMemberDto dto) {
+    var member = memberRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("member not found: " + id));
     if (dto.getName() != null) {
       member.setName(dto.getName());
     }
     memberRepository.save(member);
-    return member;
+    return new MemberResponseDto(member.getId(), member.getEmail(), member.getName());
   }
 
   public void deleteMember(UUID id) {

@@ -1,5 +1,6 @@
 package com.dobot0101.springbootauth.domain.member;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,22 +22,22 @@ public class MemberController {
   private final MemberService memberService;
 
   @PostMapping
-  public Member createMember(@RequestBody @Validated CreateMemberDto dto) {
+  public MemberResponseDto createMember(@RequestBody @Valid CreateMemberDto dto) {
     return memberService.createMember(dto);
   }
 
   @GetMapping("{id}")
-  public Member findMember(@PathVariable UUID id) {
+  public MemberResponseDto findMember(@PathVariable UUID id) {
     return memberService.findMember(id);
   }
 
   @GetMapping
-  public List<Member> findAllMembers() {
+  public List<MemberResponseDto> findAllMembers() {
     return memberService.findAllMembers();
   }
 
   @PatchMapping("{id}")
-  public Member upateMember(@PathVariable UUID id, @RequestBody @Validated UpdateMemberDto dto) {
+  public MemberResponseDto upateMember(@PathVariable UUID id, @RequestBody @Valid UpdateMemberDto dto) {
     return memberService.updateMember(id, dto);
   }
 
